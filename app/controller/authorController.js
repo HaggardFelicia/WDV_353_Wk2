@@ -20,12 +20,25 @@ const getAuthorById = (req, res) => {
 
 const createAuthor = async (req, res) => {
     const {author} = req.body;
-    const newAuthor = await Authors.create(author);
-    console.log('data >>>', newAuthor);
-    res.status(200).json({ 
-        message: `${req.method} - request to Author endpoint`, 
-        success: true
-    });
+    try{
+        const newAuthor = await Authors.create(author);
+        console.log('data >>>', newAuthor);
+        res.status(200).json({ 
+            message: `${req.method} - request to Author endpoint`, 
+            success: true
+        });
+    }
+    catch(error){
+        if (error.name === 'ValidationError') {
+            console.error('Error Validating!', error);
+            res.status(422).json(error);
+        }
+        else{
+            console.error(error);
+            res.status(500).json(error);
+        }
+    }
+    
 };
 
 const updateAuthor = async (req, res) => {
